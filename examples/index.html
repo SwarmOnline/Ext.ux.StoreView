@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ext.ux.StoreView</title>
+
+    <link rel="stylesheet" type="text/css" href="../lib/st2/resources/css/sencha-touch.css" media="all"/>
+
+    <script type="text/javascript" src="../lib/st2/sencha-touch-debug.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        Ext.Loader.setConfig({
+            enabled: true,
+            disableCaching: true,
+            paths: {
+                'Ext': '../lib/st2/src'
+            }
+        });
+    </script>
+
+    <!-- Include Plugin code -->
+    <script type="text/javascript" src="../Ext.ux.StoreView.js"></script>
+
+    <script type="text/javascript">
+
+        Ext.setup({
+            onReady: function() {
+
+                Ext.define('Ext.ux.Person', {
+                    extend: 'Ext.data.Model',
+                    config: {
+                        fields: ['Name', 'Age']
+                    }
+                });
+
+                 store = Ext.create('Ext.data.Store', {
+                   model: 'Ext.ux.Person',
+                    views: [{
+                        name: 'over20',
+                        filterFn: function(rec){
+                            return rec.get('Age') > 20
+                        }
+                    }],
+                   data: [{
+                       Name: 'Stuart',
+                       Age: 25
+                   }, {
+                       Name: 'Stuart2',
+                       Age: 11
+                   }, {
+                       Name: 'Stuart3',
+                       Age: 7
+                   }, {
+                       Name: 'Stuart4',
+                       Age: 44
+                   }, {
+                       Name: 'Stuart5',
+                       Age: 90
+                   }, {
+                       Name: 'Stuart6',
+                       Age: 33
+                   }, {
+                       Name: 'Stuart7',
+                       Age: 66
+                   }, {
+                       Name: 'Stuart8',
+                       Age: 2
+                   }, {
+                       Name: 'Stuart9',
+                       Age: 28
+                   }, {
+                       Name: 'Stuart10',
+                       Age: 16
+                   }, {
+                       Name: 'Stuart11',
+                       Age: 111
+                   }]
+                });
+
+
+var list = Ext.create('Ext.List', {
+    itemTpl: '{Name} - {Age}',
+    store: store,
+    height: 200
+});
+
+
+
+                var list2 = Ext.create('Ext.List', {
+                    itemTpl: '{Name} - {Age}',
+                    store: store.getView('over20'),
+                    height: 200,
+                    style: 'border: 1px solid #000;'
+                });
+
+                var panel = Ext.create('Ext.Panel', {
+                    items: [list, list2]
+                });
+
+Ext.Viewport.add(panel);
+
+
+            }
+        });
+
+
+    </script>
+
+
+</head>
+
+<body>
+
+
+</body>
+</html>

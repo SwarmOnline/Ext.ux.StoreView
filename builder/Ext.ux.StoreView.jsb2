@@ -1,0 +1,21 @@
+{
+    "projectName": "Ext.ux.StoreView",
+    "deployDir": "",
+    "licenseText": "Ext.ux.StoreView",
+    "pkgs": [
+        {
+            "name": "Ext.ux.StoreView",
+            "file": "Ext.ux.StoreView-min.js",
+            "isDebug": false,
+            "fileIncludes": [
+                {
+                    "text": "Ext.ux.StoreView.js",
+                    "path": "../"
+                }
+            ]
+        }
+    ],
+    "resources": [
+
+    ]
+}
