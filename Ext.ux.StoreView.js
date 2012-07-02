@@ -31,6 +31,8 @@ Ext.define('Ext.ux.StoreView', {
 				removerecords: this.refreshViews,
 				scope: this
 			});
+		} else {
+			this.config.views = {};
 		}
 	},
 
@@ -72,7 +74,9 @@ Ext.define('Ext.ux.StoreView', {
 			store: Ext.create('Ext.data.Store', {
 				model: this.getModel(),
 				data: this.data.filterBy(viewCfg.filterFn).items
-			})
+			}),
+
+			refresh: Ext.bind(this.refreshView, this, [viewCfg.name], true)
 		});
 
 		return viewCfg;
@@ -113,13 +117,28 @@ Ext.define('Ext.ux.StoreView', {
 			if (views.hasOwnProperty(property)) {
 				view = views[property];
 
-				// remove all records from the view
-				view.store.data.clear();
-
-				// readd the appropriate records from the main store to the View
-				view.store.add(this.data.filterBy(view.filterFn).items);
+				this.refreshView(view);
 			}
 		}
+	},
+
+	/**
+	 * Refreshes a single View's data.
+	 * @param {Object/String} view Either a View object or the name of the View to be refreshed
+	 * @method
+	 * @private
+	 * @returns {void}
+	 */
+	refreshView: function(view){
+		if(Ext.isString(view)){
+			view = this.getViewData(view);
+		}
+
+		// remove all records from the view
+		view.store.data.clear();
+
+		// readd the appropriate records from the main store to the View
+		view.store.add(this.data.filterBy(view.filterFn).items);
 	},
 
 	/**
