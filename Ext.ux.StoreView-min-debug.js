@@ -26,17 +26,28 @@ Ext.define('Ext.ux.StoreView', {
 		// if the 'views' config was supplied with an array with at least one item then we set it up
 		if(this.getViews() && Ext.isArray(this.getViews()) && this.getViews().length > 0){
 			this.initViews();
-
-			// Bind to the add, remove and update events so the views are refreshed when the data changes.
-			this.on({
-				addrecords: this.refreshViews,
-				updaterecord: this.refreshViews,
-				removerecords: this.refreshViews,
-				scope: this
-			});
 		} else {
 			this.config.views = {};
 		}
+
+		this.initEvents();
+	},
+
+	/**
+	 * Bind handlers to the Store's events to keep Views up to date.
+	 * @method
+	 * @private
+	 * @return {void}
+	 */
+	initEvents: function(){
+		// Bind to the add, remove and update events so the views are refreshed when the data changes.
+		this.on({
+			addrecords: this.refreshViews,
+			updaterecord: this.refreshViews,
+			removerecords: this.refreshViews,
+			refresh: this.refreshViews,
+			scope: this
+		});
 	},
 
 	/**
@@ -76,7 +87,7 @@ Ext.define('Ext.ux.StoreView', {
 
 			store: Ext.create('Ext.data.Store', {
 				model: this.getModel(),
-				data: this.data.filterBy(viewCfg.filterFn).items
+				data: this.data.filterBy(viewCfg.filterFn, this, true).items
 			}),
 
 			refresh: Ext.bind(this.refreshView, this, [viewCfg.name], true)
@@ -138,10 +149,22 @@ Ext.define('Ext.ux.StoreView', {
 		}
 
 		// remove all records from the view
-		view.store.data.clear();
+		view.store.removeAll();
 
 		// readd the appropriate records from the main store to the View
-		view.store.add(this.data.filterBy(view.filterFn).items);
+		view.store.add(this.data.filterBy(view.filterFn, this, true).items);
+	},
+
+	/**
+	 * Returns the actual record from the main data store rather than the View's copy.
+	 * Pass in the View's record instance to have the main one returned.
+	 * @method
+	 * @public
+	 * @param {Model} record A View's copy of a record.
+	 * @return {Model} The original record instance from the main store.
+	 */
+	getActual: function(record){
+		return this.getById(record.getId());
 	},
 
 	/**
@@ -178,6 +201,39 @@ Ext.define('Ext.ux.StoreView', {
 	 */
 	getViewData: function(viewName){
 		return this.getViews()[viewName];
+	}
+
+});
+
+
+
+Ext.define('Ext.override.Collection', {
+	override: 'Ext.util.Collection',
+
+	/**
+	 * This override allows the filter to be applied to only the Collection's filtered items rather than the full item set.
+	 * @param fn
+	 * @param scope
+	 * @param useFilteredItems
+	 * @return {this.self}
+	 */
+	filterBy: function(fn, scope, useFilteredItems) {
+		var me = this,
+			newCollection = new this.self(),
+			keys   = me.keys,
+			items  = useFilteredItems ? me.items : me.all,
+			length = items.length,
+			i;
+
+		newCollection.getKey = me.getKey;
+
+		for (i = 0; i < length; i++) {
+			if (fn.call(scope || me, items[i], keys[i])) {
+				newCollection.add(keys[i], items[i]);
+			}
+		}
+
+		return newCollection;
 	}
 
 });
