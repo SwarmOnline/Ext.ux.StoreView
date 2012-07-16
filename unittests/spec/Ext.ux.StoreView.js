@@ -69,9 +69,9 @@ describe("Ext.ux.StoreView", function(){
 				filterFn: Ext.emptyFn
 			}]);
 
-			expect(Ext.isObject(store.getViews())).toEqual(true);
-			expect(store.getViews().View1).toBeDefined();
-			expect(store.getViews().View2).toBeDefined();
+			expect(Ext.isObject(store.getViewInstances())).toEqual(true);
+			expect(store.getViewInstances().View1).toBeDefined();
+			expect(store.getViewInstances().View2).toBeDefined();
 
 		});
 
@@ -84,7 +84,7 @@ describe("Ext.ux.StoreView", function(){
 				filterFn: Ext.emptyFn
 			}]);
 
-			var views = store.getViews();
+			var views = store.getViewInstances();
 
 			Ext.Object.each(views, function(key, val){
 				expect(val.name).toEqual(key);
@@ -106,7 +106,7 @@ describe("Ext.ux.StoreView", function(){
 				}
 			}]);
 
-			var views = store.getViews();
+			var views = store.getViewInstances();
 
 			expect(views.View1.store.getCount()).toEqual(7);
 			expect(views.View2.store.getCount()).toEqual(4);
@@ -148,7 +148,7 @@ describe("Ext.ux.StoreView", function(){
 				filterFn: Ext.emptyFn
 			});
 
-			var views = store.getViews();
+			var views = store.getViewInstances();
 
 			expect(views.View3).toBeDefined();
 			expect(addedView).toEqual(views.View3); // returned view is same as retrieved view
@@ -178,7 +178,7 @@ describe("Ext.ux.StoreView", function(){
 				}
 			});
 
-			var views = store.getViews();
+			var views = store.getViewInstances();
 
 			expect(views.View3.store.getCount()).toEqual(7);
 		});

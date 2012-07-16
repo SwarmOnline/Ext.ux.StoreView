@@ -21,7 +21,7 @@ Ext.define('Ext.ux.StoreView', {
 		this.callParent(arguments);
 
 		// if the 'views' config was supplied with an array with at least one item then we set it up
-		if(this.getViews() && Ext.isArray(this.getViews()) && this.getViews().length > 0){
+		if(this.getViewInstances() && Ext.isArray(this.getViewInstances()) && this.getViewInstances().length > 0){
 			this.initViews();
 		} else {
 			this.config.views = {};
@@ -58,12 +58,12 @@ Ext.define('Ext.ux.StoreView', {
 	 */
 	initViews: function(){
 		var i = 0,
-			l = this.getViews().length,
+			l = this.getViewInstances().length,
 			view,
 			views = {};
 
 		for(; i < l; i++){
-			view = this.getViews()[i];
+			view = this.getViewInstances()[i];
 
 			views[view.name] = this.createView(view);
 		}
@@ -109,7 +109,7 @@ Ext.define('Ext.ux.StoreView', {
 
 		var newView = this.createView(viewCfg);
 
-		this.getViews()[newView.name] = newView;
+		this.getViewInstances()[newView.name] = newView;
 
 		return newView;
 	},
@@ -121,7 +121,7 @@ Ext.define('Ext.ux.StoreView', {
 	 * @returns {void}
 	 */
 	refreshViews: function(){
-		var views = this.getViews(),
+		var views = this.getViewInstances(),
 			view;
 
 		for (var property in views) {
@@ -171,7 +171,7 @@ Ext.define('Ext.ux.StoreView', {
 	 * @public
 	 * @return {Object} The View object in the format: { viewName: { store: ..., view: { name: viewName, filterFn: ... } } }
 	 */
-	getViews: function(){
+	getViewInstances: function(){
 		return this.config.views;
 	},
 
@@ -197,7 +197,7 @@ Ext.define('Ext.ux.StoreView', {
 	 * @return {Object} The View object or undefined if not found
 	 */
 	getViewData: function(viewName){
-		return this.getViews()[viewName];
+		return this.getViewInstances()[viewName];
 	}
 
 });
