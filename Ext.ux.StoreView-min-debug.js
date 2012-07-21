@@ -87,7 +87,7 @@ Ext.define('Ext.ux.StoreView', {
 
 			store: Ext.create('Ext.data.Store', {
 				model: this.getModel(),
-				data: this.data.filterBy(viewCfg.filterFn, this, true).items
+				data: this.data.filterBy(Ext.bind(viewCfg.filterFn, this, [viewCfg.params], true), this, true).items
 			}),
 
 			refresh: Ext.bind(this.refreshView, this, [viewCfg.name], true)
@@ -152,7 +152,7 @@ Ext.define('Ext.ux.StoreView', {
 		view.store.removeAll();
 
 		// readd the appropriate records from the main store to the View
-		view.store.add(this.data.filterBy(view.filterFn, this, true).items);
+		view.store.add(this.data.filterBy(Ext.bind(view.filterFn, this, [view.params], true), this, true).items);
 	},
 
 	/**
@@ -182,14 +182,25 @@ Ext.define('Ext.ux.StoreView', {
 	 * Returns the specified View's store so it can be bound to a component etc.
 	 * @method
 	 * @param {String} viewName The name of the View to access (as configured by the 'name' property supplied originally)
+	 * @param {Object} params An object containing parameter values that are passed as the filterFns 3rd argument allowing additional values to be included in the filter function at runtime
 	 * @method
 	 * @public
 	 * @return {Ext.data.Store} The View's store
 	 */
-	getView: function(viewName){
+	getView: function(viewName, params){
 		var view = this.getViewData(viewName);
 
-		return Ext.isEmpty(view) ? null : view.store;
+		if(Ext.isEmpty(view)){
+			return null;
+		}
+
+		if(!Ext.isEmpty(params)){
+			view.params = params;
+
+			this.refreshView(view);
+		}
+
+		return view.store;
 	},
 
 	/**
