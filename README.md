@@ -7,7 +7,7 @@ This class is an override to the Ext.data.Store class and introduces a concept o
 
 I felt this was necessary as it wasn't easy to display two (or more) subsets of the same data store without having to manually maintain these subsets individually.
 
-For example, an application could display a list of Todos in a sidebar for the current user and a main grid containing everyone's Todos. To have a single data store containing __all__ the records and then filter these into a second data store to get the current users set.
+For example, an application could display a list of Todos in a sidebar for the current user and a main grid containing everyone's Todos. To have a single data store containing __all__ the records and then filter these into a second data store to get the current user's set.
 
 This could have been easier if we could define a View filter which was maintained and updated as necessary automatically and I could simply bind this sidebar list to this view.
 
@@ -40,7 +40,7 @@ Now we have a store we can bind the main store and the view to their relevant co
     	…
     });
     
-    var list = Ext.create('Ext.List', {
+    var listMain = Ext.create('Ext.List', {
     	…
     	store: store
     	…
