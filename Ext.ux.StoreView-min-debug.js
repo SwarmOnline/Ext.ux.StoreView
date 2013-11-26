@@ -6,21 +6,23 @@
  */
 Ext.define('Ext.ux.StoreView', {
 
-    override: 'Ext.data.Store',
+	override: 'Ext.data.Store',
 
-    config: {
+	config: {
 
-	    /**
-	     * @cfg {Object[]} views The views configuration. This must have the following properties:
-	     *
-	     *  - {String} name The name of the view that will be used as its identifier when retrieving it later. This should be a valid JavaScript object key.
-	     *  - {Function} filterFn This is the function that will be used to determine the records that are included in the view. This will be passed to the underlying Ext.util.MixedCollection instance's filterBy method and so should
-	     *                        accept 1 parameter (the current model instance) and return true or false determining if the record will be included in the dataset.
-	     */
+		/**
+		 * @cfg {Object[]} views The views configuration. This must have the following properties:
+		 *
+		 *  - {String} name The name of the view that will be used as its identifier when retrieving it later. This should be a valid JavaScript object key.
+		 *  - {Function} filterFn This is the function that will be used to determine the records that are included in the view. This will be passed to the underlying Ext.util.MixedCollection instance's filterBy method and so should
+		 *                        accept 1 parameter (the current model instance) and return true or false determining if the record will be included in the dataset.
+		 */
 
-    },
+	},
 
 	constructor: function(){
+		this.initConfig(arguments);
+
 		this.callParent(arguments);
 
 		// if the 'views' config was supplied with an array with at least one item then we set it up
@@ -71,7 +73,11 @@ Ext.define('Ext.ux.StoreView', {
 			views[view.name] = this.createView(view);
 		}
 
-		this.config.views = views;
+		if(this.config.views){
+			this.config.views = views;
+		} else {
+			this.view = views;
+		}
 	},
 
 	/**
@@ -86,7 +92,7 @@ Ext.define('Ext.ux.StoreView', {
 		Ext.apply(viewCfg, {
 
 			store: Ext.create('Ext.data.Store', {
-				model: this.getModel(),
+				model: this.getModel ? this.getModel() : this.model,
 				data: this.data.filterBy(Ext.bind(viewCfg.filterFn, this, [viewCfg.params], true), this, true).items
 			}),
 
@@ -175,7 +181,7 @@ Ext.define('Ext.ux.StoreView', {
 	 * @return {Object} The View object in the format: { viewName: { store: ..., view: { name: viewName, filterFn: ... } } }
 	 */
 	getViewInstances: function(){
-		return this.config.views;
+		return this.config.views || this.views;
 	},
 
 	/**
